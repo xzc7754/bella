@@ -16,13 +16,10 @@
   // hacer clic. Ejemplo: ['https://', 'tu-sitio', '.com', '/tu-ruta']
   // (Ojo: fraccionar solo evita que un buscador de texto lea la URL completa;
   //  no es seguridad. Quien abra este archivo o mire la red la verá igual.)
-
-
-  var LINKS = {
+   var LINKS = {
     priv: ['https://', 'openinapp', '.link/08z97'],
     instagram: 'https://www.instagram.com/bella.hwife/',
     tiktok:    'https://www.tiktok.com/',
-   
   };
 
   // Botones en el orden en que aparecen. Borra los que no uses.
@@ -32,11 +29,12 @@
   //   slug = clave de LINKS (lo que se ve en /go/...)
   //   img  = (opcional) foto de tarjeta grande: pega aquí la URL de tu imagen de Blogger
   //   gate = true muestra primero el aviso +18
-  var BOTONES = [
+ var BOTONES = [
     { k: 'p1',  l: 'Seamos Amigos 🤭', slug: 'priv', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMV76Ri9DJYZ5gWWmlRAwky5KQ8wfXW7IcwZ_m1i_h11nNQ6PdQt2Hs3GrZwcE2HIfWlQeH4-PwGtpZNlTP3l3lW2H-erYfdTwqvVyLd1m1TFMw6hpkCql95egzRSMeiRP576KFs0nuomVzw0i0pHpC6dW9qxOMw57hsXK5M-wnIsvn9guI-vvbNVKTdI/s1290/005.jpg', gate: true },
     { k: 'p2',  l: 'Instagram',              slug: 'instagram' },
     { k: 'p3',  l: 'TikTok',                 slug: 'tiktok' },
       ];
+  ];
 
   // ===============================================================
 
@@ -112,27 +110,6 @@
     if (conRespaldo) vigilar(t, ms);
   }
 
-  // Pantalla completa "Abrir en el navegador"
-  function pantalla(t) {
-    if (document.getElementById('h')) return;
-    var largo = ios && app && !ig && !th;   // iOS sin esquema directo: pulsación larga
-    var d = el('div'); d.id = 'h';
-    var tit = el('strong'); tit.textContent = 'Abrir en tu navegador';
-    var a = el('a'); a.href = t; a.textContent = largo ? 'Abrir' : 'Abrir en el navegador';
-    a.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (!largo) salir(t, true);
-    });
-    var p = el('p');
-    p.textContent = largo
-      ? 'Mantén pulsado el botón 3 segundos y toca Abrir.'
-      : 'Toca Abrir y confirma el aviso de la app.';
-    var p2 = el('p');
-    p2.textContent = 'Si no pasa nada, usa el menú de la app (⋯) y elige “Abrir en el navegador”, o copia la dirección en Safari o Chrome.';
-    d.appendChild(tit); d.appendChild(a); d.appendChild(p); d.appendChild(p2);
-    document.body.appendChild(d);
-  }
-
   // propio: true = es esta misma página (sin recarga de respaldo para no entrar en bucle)
   function salir(t, propio) {
     var enc = encodeURIComponent(t);
@@ -140,16 +117,18 @@
     if (ios && ig) return ir('instagram://extbrowser/?url=' + enc, t, 1600, !propio);
     if (ios && th) return ir('barcelona://extbrowser/?url=' + enc, t, 1600, !propio);
     if (and && app) return ir('intent://' + hp + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + enc + ';end', t, 2600, !propio);
-    if (ios && app) return pantalla(t);
-    location.assign(t);
+    location.assign(t);   // sin forma de salir (p. ej. TikTok en iPhone): se abre dentro de la app
   }
+
+  // ¿Hay forma de abrir fuera de esta app? (Android: Chrome; iPhone: Instagram y Threads)
+  var puedeSalir = and || (ios && (ig || th));
 
   // ---------- Entrada directa a /go/nombre (desde otra pestaña, etc.) ----------
   var aterrizaje = slugDe(location.pathname);
   var objetivo = null;
   if (aterrizaje !== null) {
     objetivo = dest(aterrizaje);
-    if (!app) {
+    if (!app || !puedeSalir || !objetivo) {
       document.documentElement.style.visibility = 'hidden';
       location.replace(objetivo || '/');
       return;
@@ -216,15 +195,13 @@
 
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) return;
-    var h = document.getElementById('h');
-    if (h) h.remove();
     reposo();
   });
 
-  // ---------- Navegador interno: obligar a salir nada más entrar ----------
-  if (app) {
-    var t0 = objetivo || location.href;
-    pantalla(t0);
-    if (and) salir(t0, !objetivo);
+  // ---------- Navegador interno: intentar salir nada más entrar ----------
+  // Solo es un intento: si la app no lo permite, la web se queda funcionando normal
+  // (sin bloqueo). Cada botón vuelve a intentar salir al tocarlo.
+  if (app && puedeSalir) {
+    salir(objetivo || location.href, !objetivo);
   }
 })();
