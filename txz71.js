@@ -33,7 +33,7 @@
   //   img  = (opcional) foto de tarjeta grande: pega aquí la URL de tu imagen de Blogger
   //   gate = true muestra primero el aviso +18
   var BOTONES = [
-    { k: 'p1',  l: 'Seamos Amigos 🤭', slug: 'priv', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhhVSBw38DeAIVKXPQynYb-eh2WFirDcXakYU2LUTkJiJeGsR6uIW01QpzqKlauaWk1DzVAL7r2a8ZrD6g7gOJqz_yx-vHvs7KaqlD3QuTXi5bl0XDhMX40I4e-Lkc3Ee09zxJitTNrUYd_o3htiqHfB19qmaaI4gErcBdD4aMucPiYjy4I-jo9V-23hHE/s1695/005.jpg', gate: true },
+    { k: 'p1',  l: 'Seamos Amigos 🤭', slug: 'priv', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMV76Ri9DJYZ5gWWmlRAwky5KQ8wfXW7IcwZ_m1i_h11nNQ6PdQt2Hs3GrZwcE2HIfWlQeH4-PwGtpZNlTP3l3lW2H-erYfdTwqvVyLd1m1TFMw6hpkCql95egzRSMeiRP576KFs0nuomVzw0i0pHpC6dW9qxOMw57hsXK5M-wnIsvn9guI-vvbNVKTdI/s1290/005.jpg', gate: true },
     { k: 'p2',  l: 'Instagram',              slug: 'instagram' },
     { k: 'p3',  l: 'TikTok',                 slug: 'tiktok' },
       ];
